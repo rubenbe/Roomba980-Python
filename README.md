@@ -308,6 +308,30 @@ To get the blid and password from the cloud run:
 ```
 Where `<login>` and `<password>` are your iRobot account login and password. Results are displayed and saved to the config file.
 
+## Working around OpenSSL issues
+On modern Linux systems you might get OpenSSL errors `UNSAFE_LEGACY_RENEGOTIATION_DISABLED` or `DH_KEY_TOO_SMALL`.
+Create an openssl config file:
+```
+openssl_conf = openssl_init
+
+[openssl_init]
+ssl_conf = ssl_sect
+
+[ssl_sect]
+system_default = system_default_sect
+
+[system_default_sect]
+Options = UnsafeLegacyRenegotiation
+MinProtocol = TLSv1
+CipherString = DEFAULT:@SECLEVEL=1
+```
+Then use this config file when e.g. fetching the password:
+
+```
+export OPENSSL_CONF=/home/ruben/projects/2024/1225-roomba/openssl.conf
+./getpassword.py <ipaddress>
+```
+
 ## config.ini
 By default, all settings are stored in the *config.ini* file. You can change this file if you like (but there is really no need).  
 An exaple file *config_example.ini* is given to show the structure of the file. It is a standard `ini` file with each section being the ip address of each robot.  
